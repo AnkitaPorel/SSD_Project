@@ -1,0 +1,80 @@
+/* Container for the whole register page */
+.register-container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(to right, #f0f4f8, #fff);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+  }
+  
+  /* Welcome section on the left */
+  .welcome-section {
+    flex: 1;
+    text-align: left;
+    color: #333;
+    padding: 20px;
+  }
+  
+  .welcome-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 10px;
+  }
+  
+  .welcome-section p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #666;
+  }
+  
+  /* Register form on the right */
+  .register-form {
+    flex: 1;
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .register-form h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #444;
+  }
+  
+  .register-form form div {
+    margin-bottom: 20px;
+  }
+  
+  .register-form input[type="text"],
+  .register-form input[type="email"],
+  .register-form input[type="password"],
+  .register-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    outline: none;
+  }
+  
+  .register-form button[type="submit"] {
+    background-color: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .register-form button[type="submit"]:hover {
+    background-color: #1b5e20;
+  }
+  

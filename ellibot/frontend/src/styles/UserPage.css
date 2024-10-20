@@ -1,0 +1,27 @@
+.user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(to right, #f0f4f8, #fff);
+    height: 100vh;
+    padding: 20px;
+  }
+  
+  .welcome-section {
+    text-align: center;
+  }
+  
+  button {
+    background-color: #2e7d32;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  button:hover {
+    background-color: #1b5e20;
+  }
+  
