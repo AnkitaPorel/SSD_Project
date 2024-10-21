@@ -7,9 +7,32 @@ const MetaModelUpload = () => {
     setFile(event.target.files[0]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert(`Meta-model uploaded: ${file ? file.name : 'No file uploaded'}`);
+    if (!file) {
+      alert('Please upload a JSON file.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file); // Append the file to form data
+
+    try {
+      const response = await fetch('http://localhost:5001/api/upload-meta-model', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.msg);
+      } else {
+        alert(`Error: ${data.msg}`);
+      }
+    } catch (error) {
+      console.error('Error uploading meta-model:', error);
+      alert('Failed to upload meta-model.');
+    }
   };
 
   return (
