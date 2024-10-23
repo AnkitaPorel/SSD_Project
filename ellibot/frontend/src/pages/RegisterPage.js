@@ -45,7 +45,7 @@ const RegisterPage = () => {
         setEmail('');
         setPassword('');
         setDepartment('');
-        navigate('/login');
+        navigate('/');
       } else {
         setError(data.msg || 'Registration failed.');
       }
