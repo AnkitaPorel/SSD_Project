@@ -1,44 +1,66 @@
+/* Container for the admin page */
 .admin-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(to right, #f0f4f8, #fff);
-    height: 100vh;
-    padding: 20px;
-  }
-  
-  .welcome-section {
-    text-align: center;
-  }
-  
-  .meta-model-section,
-  .requirements-section {
-    background: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .requirements-section ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .requirements-section li {
-    margin-bottom: 10px;
-  }
-  
-  button {
-    background-color: #2e7d32;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #1b5e20;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to right, #f0f4f8, #fff);
+  height: 100vh;
+  padding: 20px;
+}
+
+/* Logout button section */
+.logout-section {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.logout-button {
+  background-color: #2e7d32;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #1b5e20;
+}
+
+/* Other sections remain the same */
+.welcome-section {
+  text-align: center;
+}
+
+.meta-model-section,
+.requirements-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.requirements-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.requirements-section li {
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #2e7d32;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1b5e20;
+}
