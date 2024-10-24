@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const { ensureAuthenticated, ensureAdmin } = require('../routes/authroutes');
+
+router.get('/user', ensureAuthenticated, (req, res) => {
+    res.status(200).json({ msg:'Welcome to the user section. You are logged in!', user: req.session.user });
+});
+
+router.get('/admin',ensureAdmin, (req, res) => {
+  if (req.session.user.email === 'Admin@ellibot.com') {
+    return res.status(200).json({ msg: 'Welcome to the admin dashboard' });
+  } else {
+    return res.status(403).json({ msg: 'Forbidden: You do not have access to this route' });
+  }
+});
 
 router.post('/register', async (req, res) => {
   const { name, email, password, department } = req.body;
@@ -47,6 +60,9 @@ router.post('/login', async (req, res) => {
     if (!user || user.password !== password) {
       return res.status(401).json({ msg: 'Invalid email or password' });
     }
+
+    req.session.user = {email: user.email, role: 'user'};
+
     res.status(200).json({
       name: user.name,
       email: user.email,
