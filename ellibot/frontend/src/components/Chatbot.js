@@ -9,7 +9,7 @@ const Chatbot = () => {
   const [userResponses, setUserResponses] = useState({});
   const [isDefaultQuestionAsked, setIsDefaultQuestionAsked] = useState(false);
 
-  const defaultQuestion = "Is there anything else you would like to add or clarify?";
+  const defaultQuestion = "Before we finish, is there anything else you'd like to share or clarify?";
 
   // Fetch meta-model on mount
   useEffect(() => {
@@ -19,11 +19,11 @@ const Chatbot = () => {
         if (!response.ok) throw new Error('Failed to fetch meta-model');
         
         const data = await response.json();
-        setMetaModel(data); // Store meta-model
+        setMetaModel(data);
         
         setMessages([
           { sender: 'bot', text: 'Welcome to the chat!' },
-          { sender: 'bot', text: `Please specify the ${data.data.reportMetaModel.attributes[0].label}.` },
+          { sender: 'bot', text: `Let’s get started. Could you please specify the ${data.data.reportMetaModel.attributes[0].label}?` },
         ]);
       } catch (error) {
         console.error('Error fetching meta-model:', error);
@@ -32,7 +32,7 @@ const Chatbot = () => {
     };
 
     fetchMetaModel();
-  }, []); // Run only once on mount
+  }, []);
 
   const handleSendMessage = () => {
     if (input.trim()) {
@@ -40,34 +40,37 @@ const Chatbot = () => {
         ...prevMessages,
         { sender: 'user', text: input.trim() },
       ]);
-
-      // Handle input based on current state
       if (isDefaultQuestionAsked) {
         handleDefaultQuestionResponse();
       } else if (metaModel) {
         handleMetaModelQuestions();
       }
 
-      setInput(''); // Clear the input field
+      setInput('');
     }
   };
 
   const handleMetaModelQuestions = () => {
     const currentAttribute = metaModel.data.reportMetaModel.attributes[currentQuestionIndex];
     if (currentAttribute) {
-      // Save user response
       setUserResponses((prev) => ({
         ...prev,
         [currentAttribute.name]: input.trim(),
       }));
 
-      // Move to next question
       const nextIndex = currentQuestionIndex + 1;
       if (nextIndex < metaModel.data.reportMetaModel.attributes.length) {
         const nextAttribute = metaModel.data.reportMetaModel.attributes[nextIndex];
+        const variedQuestions = [
+          `Can you please provide the ${nextAttribute.label}?`,
+          `I need to know the ${nextAttribute.label}. Could you share it?`,
+          `Next, could you specify the ${nextAttribute.label}?`,
+        ];
+        const randomQuestion = variedQuestions[Math.floor(Math.random() * variedQuestions.length)];
+
         setMessages((prevMessages) => [
           ...prevMessages,
-          { sender: 'bot', text: `Please specify the ${nextAttribute.label}.` },
+          { sender: 'bot', text: randomQuestion },
         ]);
         setCurrentQuestionIndex(nextIndex);
       } else {
@@ -77,27 +80,42 @@ const Chatbot = () => {
   };
 
   const summarizeResponses = () => {
-    let summary = 'Here is the summary of your responses:\n';
+    let summary = 'Here is a quick summary of what you’ve shared:\n';
     metaModel.data.reportMetaModel.attributes.forEach((attr) => {
       const userResponse = userResponses[attr.name] || 'N/A';
       summary += `${attr.label}: ${userResponse}\n`;
     });
 
+    const variedSummaryMessages = [
+      "Here's what we have so far:",
+      "Here’s a recap of your responses:",
+      "This is the information you've provided:",
+    ];
+    const summaryIntro = variedSummaryMessages[Math.floor(Math.random() * variedSummaryMessages.length)];
+
     setMessages((prevMessages) => [
       ...prevMessages,
+      { sender: 'bot', text: summaryIntro },
       { sender: 'bot', text: summary },
       { sender: 'bot', text: defaultQuestion },
     ]);
 
-    setIsDefaultQuestionAsked(true); // Mark that the default question has been asked
+    setIsDefaultQuestionAsked(true);
   };
 
   const handleDefaultQuestionResponse = () => {
+    const variedFinalMessages = [
+      "Thank you for your input! Let me know if you'd like to revisit anything.",
+      "Got it! If there's nothing else, have a great day!",
+      "Thanks for sharing! If you need further assistance, just let me know.",
+    ];
+    const finalMessage = variedFinalMessages[Math.floor(Math.random() * variedFinalMessages.length)];
+
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: 'bot', text: "Thank you for your input! If you'd like to start over, let me know." },
+      { sender: 'bot', text: finalMessage },
     ]);
-    setIsDefaultQuestionAsked(false); // Reset to avoid further handling of the default question
+    setIsDefaultQuestionAsked(false);
   };
 
   return (
