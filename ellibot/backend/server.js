@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 
 const userRoutes = require('./routes/user');
 const metaRoutes = require('./routes/metaroutes');
+const elitoolRoutes = require('./routes/elitool');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -50,7 +51,8 @@ app.use(
 )
 
 app.use('/api', userRoutes);
-app.use('/api',metaRoutes);
+app.use('/api', metaRoutes);
+app.use('/api', elitoolRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

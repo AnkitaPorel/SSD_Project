@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/LoginPage.css';  // Import the CSS file for styling
+import '../styles/LoginPage.css';
 
 const BACKEND_URI = "http://localhost:5001/api/login";
 
@@ -17,7 +17,6 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // Make the API call to the backend login route
       const response = await fetch(BACKEND_URI, {
         method: 'POST',
         headers: {
@@ -29,15 +28,13 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Admin check (Priyamwada)
         if (data.email === 'Admin@ellibot.com') {
-          navigate('/admin');  // Navigate to Admin page
+          navigate('/admin');
         } else {
-          navigate('/user');   // Navigate to user dashboard for other users
+          navigate('/user');
         }
 
-        // Optionally store user session data
-        localStorage.setItem('user', JSON.stringify(data));  // Store user data in local storage
+        localStorage.setItem('user', JSON.stringify(data));
       } else {
         setError(data.msg || 'Invalid email or password');
       }
@@ -51,7 +48,7 @@ const LoginPage = () => {
   };
 
   const handleRegisterRedirect = () => {
-    navigate('/register');  // Redirect to Register Page
+    navigate('/register');
   };
 
   return (
