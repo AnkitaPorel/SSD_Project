@@ -34,50 +34,102 @@ const Chatbot = () => {
     fetchMetaModel();
   }, []);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (input.trim()) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'user', text: input.trim() },
       ]);
-      if (isDefaultQuestionAsked) {
-        handleDefaultQuestionResponse();
-      } else if (metaModel) {
-        handleMetaModelQuestions();
+  
+      const isValid = isValidEnglishPhrase(input.trim());
+      if (isValid) {
+        const validationResponse = await validateResponse(input.trim());
+        if (validationResponse.isValid) {
+          handleMetaModelQuestions();
+        } else {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { sender: 'bot', text: validationResponse.message },
+          ]);
+        }
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: 'bot', text: "Sorry, your response doesn't seem valid. Please use proper English phrases.",
+          },
+        ]);
       }
-
+  
       setInput('');
     }
   };
+  
+  // Simple local validation in the frontend
+  const isValidEnglishPhrase = (text) => {
+    const regex = /^[A-Za-z0-9,.!?'" ]+$/; // Allow letters, numbers, punctuation, and spaces
+    return regex.test(text) && text.trim().length > 0;
+  };
+  
+  // Validate response using backend API
+  const validateResponse = async (response) => {
+    try {
+      const res = await fetch('http://localhost:5001/api/validate-response', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ response }),
+      });
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error('Error during validation:', error);
+      return { isValid: false, message: 'Failed to validate the response.' };
+    }
+  };  
 
-  const handleMetaModelQuestions = () => {
+  const handleMetaModelQuestions = async () => {
     const currentAttribute = metaModel.data.reportMetaModel.attributes[currentQuestionIndex];
     if (currentAttribute) {
-      setUserResponses((prev) => ({
-        ...prev,
-        [currentAttribute.name]: input.trim(),
-      }));
+        setUserResponses((prev) => ({
+            ...prev,
+            [currentAttribute.name]: input.trim(),
+        }));
 
-      const nextIndex = currentQuestionIndex + 1;
-      if (nextIndex < metaModel.data.reportMetaModel.attributes.length) {
-        const nextAttribute = metaModel.data.reportMetaModel.attributes[nextIndex];
-        const variedQuestions = [
-          `Can you please provide the ${nextAttribute.label}?`,
-          `I need to know the ${nextAttribute.label}. Could you share it?`,
-          `Next, could you specify the ${nextAttribute.label}?`,
-        ];
-        const randomQuestion = variedQuestions[Math.floor(Math.random() * variedQuestions.length)];
+        // Validate the user response via API
+        const validationResponse = await validateResponse(input.trim(), currentAttribute);
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'bot', text: randomQuestion },
-        ]);
-        setCurrentQuestionIndex(nextIndex);
-      } else {
-        summarizeResponses();
-      }
+        if (validationResponse.isValid) {
+            const nextIndex = currentQuestionIndex + 1;
+            if (nextIndex < metaModel.data.reportMetaModel.attributes.length) {
+                const nextAttribute = metaModel.data.reportMetaModel.attributes[nextIndex];
+                const variedQuestions = [
+                    `Can you please provide the ${nextAttribute.label}?`,
+                    `I need to know the ${nextAttribute.label}. Could you share it?`,
+                    `Next, could you specify the ${nextAttribute.label}?`,
+                ];
+                const randomQuestion = variedQuestions[Math.floor(Math.random() * variedQuestions.length)];
+
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: 'bot', text: randomQuestion },
+                ]);
+                setCurrentQuestionIndex(nextIndex);
+            } else {
+                summarizeResponses();
+            }
+        } else {
+            // Provide more detailed feedback when validation fails
+            const feedback = validationResponse.suggestion || 'Your input could not be validated. Please try again.';
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'bot', text: `Sorry, the response for ${currentAttribute.label} is not quite clear. Could you please clarify?` },
+                { sender: 'bot', text: `Here’s why: ${feedback}` },
+            ]);
+        }
     }
-  };
+};
+
 
   const summarizeResponses = () => {
     let summary = 'Here is a quick summary of what you’ve shared:\n';
