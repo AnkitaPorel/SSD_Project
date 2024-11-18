@@ -26,22 +26,27 @@ const AdminPage = () => {
         <h1>Welcome, here you can upload your meta model</h1>
         <p>Upload the meta-model for user to interact with and review the generated report requirements.</p>
       </div>
-      <div className="meta-model-section">
-        <MetaModelUpload />
-      </div>
-      <div className="requirements-section">
-        <h2>Report Requirements</h2>
-        {/* Assuming requirements are coming from a database */}
-        <ul>
-          {requirements.length === 0 ? (
-            <p>No requirements yet.</p>
-          ) : (
-            requirements.map((req, index) => (
-              <li key={index}>{req}</li>
-            ))
-          )}
-        </ul>
-        <button onClick={handleSendToEngineers}>Send to Data Engineers</button>
+
+      {/* Horizontal alignment for meta-model upload and requirements */}
+      <div className="content-section">
+        <div className="meta-model-section">
+          <h2 className="meta-model-title">Upload Meta-Model</h2>
+          <MetaModelUpload />
+        </div>
+        <div className="requirements-section">
+          <h2 className="requirements-title">Report Requirements</h2>
+          {/* Assuming requirements are coming from a database */}
+          <ul>
+            {requirements.length === 0 ? (
+              <p>No requirements yet.</p>
+            ) : (
+              requirements.map((req, index) => (
+                <li key={index}>{req}</li>
+              ))
+            )}
+          </ul>
+          <button onClick={handleSendToEngineers}>Send to Data Engineers</button>
+        </div>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@ const MetaModelUpload = () => {
 
   return (
     <div className="meta-model-upload">
-      <h2>Upload Meta-Model (JSON Format)</h2>
+      <p>(Json Format)</p>
       <form onSubmit={handleSubmit}>
         <input type="file" accept=".json" onChange={handleFileChange} />
         <button type="submit">Upload</button>

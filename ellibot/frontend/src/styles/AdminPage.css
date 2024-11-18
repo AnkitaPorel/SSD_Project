@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to right, #f0f4f8, #fff);
+  background: linear-gradient(to right, #f0f4f8, #ffffff);
   height: 100vh;
   padding: 20px;
 }
@@ -23,44 +23,123 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
+  font-size: 1rem;
 }
 
 .logout-button:hover {
   background-color: #1b5e20;
 }
 
-/* Other sections remain the same */
+/* Welcome section */
 .welcome-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.welcome-section h1 {
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.welcome-section p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Horizontal alignment for content */
+.content-section {
+  display: flex;
+  justify-content: space-between;
+  width: 90%; /* Increased width for better layout */
+  gap: 20px; /* Space between sections */
+  margin-top: 20px;
+}
+
+/* Meta-model and requirements sections */
+.meta-model-section,
+.requirements-section {
+  flex: 1;
+  background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+  border-radius: 15px; /* Rounded corners */
+  padding: 20px 20px 30px; /* Extra bottom padding for spacing */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Section Titles */
+.meta-model-title,
+.requirements-title {
+  font-size: 1.8rem;
+  color: #2e7d32;
+  margin-bottom: 10px; /* Space below the title */
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Upload Meta-Model section styling */
+.meta-model-section {
+  align-items: center; /* Center-align content */
+  justify-content: center;
   text-align: center;
 }
 
-.meta-model-section,
-.requirements-section {
-  background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.meta-model-section form {
+  width: 100%;
+  margin-top: 20px;
 }
 
-.requirements-section ul {
-  list-style: none;
-  padding: 0;
+.meta-model-section input[type="file"] {
+  font-size: 1rem;
+  margin-bottom: 20px;
 }
 
-.requirements-section li {
-  margin-bottom: 10px;
-}
-
-button {
+.meta-model-section button {
   background-color: #2e7d32;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease;
 }
 
-button:hover {
+.meta-model-section button:hover {
   background-color: #1b5e20;
+}
+
+/* Report requirements styling */
+.requirements-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.requirements-section li {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #555;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for list items */
+}
+
+.requirements-section button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px; /* Space above the button */
+}
+
+.requirements-section button:hover {
+  background-color: #388e3c;
 }
