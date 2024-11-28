@@ -74,3 +74,4 @@ npm install multer
 
 npm install express jsonwebtoken bcryptjs
 
+npm install nodemailer

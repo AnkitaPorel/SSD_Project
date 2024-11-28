@@ -1,14 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // To handle navigation
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MetaModelUpload from '../components/MetaModelUpload';
-import '../styles/AdminPage.css';  // Importing the CSS for styling
+import '../styles/AdminPage.css';
 
 const AdminPage = () => {
   const [requirements, setRequirements] = useState([]);
-  const navigate = useNavigate();  // Initialize navigation
+  const [summaries, setSummaries] = useState([]);
+  const [isLoadingSummaries, setIsLoadingSummaries] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSendToEngineers = () => {
-    alert("Requirements sent to the data engineering team!");
+  useEffect(() => {
+    const fetchSummaries = async () => {
+      setIsLoadingSummaries(true);
+      try {
+        const response = await fetch('http://localhost:5001/api/get-summaries');
+        if (!response.ok) {
+          throw new Error('Failed to fetch summaries');
+        }
+        const data = await response.json();
+        setSummaries(data.summaries || []);
+      } catch (error) {
+        console.error('Error fetching summaries:', error);
+      } finally {
+        setIsLoadingSummaries(false);
+      }
+    };
+
+    fetchSummaries();
+  }, []);
+
+  const handleSendToEngineers = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/send-user-responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fixedEmails: ['ankitaporel41@gmail.com', 'ankita.porel@students.iiit.ac.in'] }),
+      });
+
+      if (response.ok) {
+        alert('User responses sent successfully to the data engineering team!');
+        setEmailSent(true);
+      } else {
+        console.error('Error sending user responses:', await response.json());
+        alert('Failed to send user responses.');
+      }
+    } catch (error) {
+      console.error('Error sending user responses:', error);
+      alert('An error occurred while sending user responses.');
+    }
   };
 
   const handleLogout = () => {
@@ -34,18 +74,21 @@ const AdminPage = () => {
           <MetaModelUpload />
         </div>
         <div className="requirements-section">
-          <h2 className="requirements-title">Report Requirements</h2>
-          {/* Assuming requirements are coming from a database */}
-          <ul>
-            {requirements.length === 0 ? (
-              <p>No requirements yet.</p>
-            ) : (
-              requirements.map((req, index) => (
-                <li key={index}>{req}</li>
-              ))
-            )}
-          </ul>
-          <button onClick={handleSendToEngineers}>Send to Data Engineers</button>
+          <h2 className="requirements-title">Report Summaries</h2>
+          {isLoadingSummaries ? (
+            <p>Loading summaries...</p>
+          ) : summaries.length === 0 ? (
+            <p>No summaries available yet.</p>
+          ) : (
+            <ul>
+              {summaries.map((summary, index) => (
+                <li key={index}>{summary}</li>
+              ))}
+            </ul>
+          )}
+          <button onClick={handleSendToEngineers} disabled={emailSent}>
+            {emailSent ? 'Email Sent!' : 'Send User Responses to Engineers'}
+          </button>
         </div>
       </div>
     </div>

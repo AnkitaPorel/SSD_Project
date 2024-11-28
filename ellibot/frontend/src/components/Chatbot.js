@@ -56,7 +56,6 @@ const Chatbot = () => {
   
     if (currentAttribute) {
       if (currentAttribute.type === 'object' && currentAttribute.attributes) {
-        // Handle nested attributes for object-type questions (e.g., Graph Options)
         const nestedAttrIndex = Object.keys(userResponses[currentAttribute.name] || {}).length;
         const nestedAttribute = currentAttribute.attributes[nestedAttrIndex];
   
@@ -66,7 +65,6 @@ const Chatbot = () => {
             { sender: 'bot', text: `Could you please specify the ${nestedAttribute.label}?` },
           ]);
   
-          // Update userResponses for nested fields
           setUserResponses((prev) => ({
             ...prev,
             [currentAttribute.name]: {
@@ -75,17 +73,14 @@ const Chatbot = () => {
             },
           }));
         } else {
-          // All nested attributes are answered, move to the next main attribute
           setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-          // Trigger the next question only if there are more main attributes
           if (currentQuestionIndex + 1 < metaModel.data.reportMetaModel.attributes.length) {
             handleMetaModelQuestions();
           } else {
-            summarizeResponses(); // Call summary if all questions are done
+            summarizeResponses();
           }
         }
       } else {
-        // Handle regular (non-object) attributes
         setUserResponses((prev) => ({
           ...prev,
           [currentAttribute.name]: input.trim(),
@@ -109,12 +104,11 @@ const Chatbot = () => {
   
   
   const summarizeResponses = async () => {
-    let summary = 'Here is a quick summary of what you’ve shared:\n';
+    let summary = 'Here is a quick summary the responses:\n';
   
     metaModel.data.reportMetaModel.attributes.forEach((attr) => {
       const userResponse = userResponses[attr.name];
       if (attr.type === 'object' && attr.attributes) {
-        // Handle nested object attributes
         summary += `${attr.label}:\n`;
         attr.attributes.forEach((nestedAttr) => {
           const nestedResponse = userResponse?.[nestedAttr.name] || 'N/A';
@@ -133,8 +127,21 @@ const Chatbot = () => {
     ]);
   
     setIsDefaultQuestionAsked(true);
-  
-    // Send the summary to the backend
+    
+    try {
+      const response = await fetch('http://localhost:5001/api/save-user-responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userResponses, userId: 'guest' }),
+      });
+
+      if (!response.ok) {
+        console.error('Error saving responses:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error saving responses:', error);
+    }
+
     try {
       const response = await fetch('http://localhost:5001/api/save-summary', {
         method: 'POST',
