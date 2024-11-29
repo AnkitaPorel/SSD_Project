@@ -70,8 +70,11 @@ const AdminPage = () => {
             <p>No summaries available yet.</p>
           ) : (
             <ul>
-              {summaries.map((summary, index) => (
-                <li key={index}>{summary}</li>
+            {summaries.map(({ userId, summary }, index) => (
+              <li key={index}>
+                <strong>User ID:</strong> {userId || "Unknown User"} <br />
+                <strong>Summary:</strong> <pre>{summary}</pre>
+              </li>
               ))}
             </ul>
           )}

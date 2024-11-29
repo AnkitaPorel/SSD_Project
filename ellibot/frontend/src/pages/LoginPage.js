@@ -32,7 +32,9 @@ const LoginPage = () => {
           navigate('/admin');
         } else {
           navigate('/user');
+          localStorage.setItem('userEmail', email);
         }
+        localStorage.setItem('user', JSON.stringify(data));
 
         localStorage.setItem('user', JSON.stringify(data));
       } else {

@@ -9,9 +9,15 @@ const Chatbot = () => {
   const [userResponses, setUserResponses] = useState({});
   const [isDefaultQuestionAsked, setIsDefaultQuestionAsked] = useState(false);
   const messagesEndRef = useRef(null);
-
+  const [userEmail, setUserEmail] = useState('');
   const defaultQuestion = "Before we finish, is there anything else you'd like to share or clarify?";
 
+  useEffect(() => {
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+      setUserEmail(email);
+    }
+  }, []);
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -138,7 +144,9 @@ const Chatbot = () => {
       const response = await fetch('http://localhost:5001/api/save-user-responses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userResponses, userId: 'guest' }),
+        body: JSON.stringify({
+          userResponses, userId: userEmail || 'guest',
+         }),
       });
 
       if (!response.ok) {

@@ -75,7 +75,11 @@ router.get('/get-summaries', async (req, res) => {
       return res.status(404).json({ summaries: [], message: 'No summaries available.' });
     }
 
-    res.status(200).json({ summaries: summaries.map(s => s.summary) });
+    res.status(200).json({ summaries: summaries.map(s => ({
+      userId: s.userId,
+      summary: s.summary,
+    }))
+  });
   } catch (error) {
     console.error('Error generating summaries:', error);
     res.status(500).json({ message: 'Failed to generate summaries.' });
