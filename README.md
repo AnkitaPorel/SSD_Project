@@ -1,8 +1,8 @@
 # About the project
 
-Tech stack used- MERN. 
+### Tech stack used- MERN. 
 
-It is meant to be used within an organization, created by an Admin, who is asked to make a report, and wants to learn the report requirements from different department heads. Here users can interact with the chat-tool to share their requirements about a report. The admin will get these requirements summarized on her end, through a different interface. The admin can choose to send the summaries to other stakeholders, if she wants. 
+### It is meant to be used within an organization, created by an Admin, who is asked to make a report, and wants to learn the report requirements from different department heads. Here users can interact with the chat-tool to share their requirements about a report. The admin will get these requirements summarized on her end, through a different interface. The admin can choose to send the summaries to other stakeholders, if she wants. 
 
 
 # Getting Started with Create React App
