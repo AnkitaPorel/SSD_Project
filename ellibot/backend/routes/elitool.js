@@ -58,13 +58,28 @@ router.post('/save-user-responses', async (req, res) => {
 
 router.get('/get-summaries', async (req, res) => {
   try {
-    const summaries = await Summary.find().sort({ createdAt: -1 }).limit(3);
-    const summaryTexts = summaries.map((summary) => summary.summary);
+    const userResponses = await UserResponses.find().sort({ createdAt: -1 }).limit(3);
 
-    res.status(200).json({ summaries: summaryTexts });
+    const summaries = userResponses.map((response) => {
+      const { userResponses } = response;
+      let summary = 'Summary:\n';
+      for (const [key, value] of Object.entries(userResponses)) {
+        if (typeof value === 'object') {
+          summary += `${key}:\n`;
+          for (const [nestedKey, nestedValue] of Object.entries(value)) {
+            summary += `   - ${nestedKey}: ${nestedValue || 'N/A'}\n`;
+          }
+        } else {
+          summary += `${key}: ${value || 'N/A'}\n`;
+        }
+      }
+      return summary;
+    });
+
+    res.status(200).json({ summaries });
   } catch (error) {
-    console.error('Error fetching summaries:', error);
-    res.status(500).json({ message: 'Failed to fetch summaries.' });
+    console.error('Error generating summaries:', error);
+    res.status(500).json({ message: 'Failed to generate summaries.' });
   }
 });
 

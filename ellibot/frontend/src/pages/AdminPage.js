@@ -35,7 +35,7 @@ const AdminPage = () => {
       const response = await fetch('http://localhost:5001/api/send-user-responses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fixedEmails: ['ankitaporel41@gmail.com', 'ankita.porel@students.iiit.ac.in'] }),
+        body: JSON.stringify({ fixedEmails: ['xyz@gmail.com', 'abc@gmail.com'] }),
       });
 
       if (response.ok) {
