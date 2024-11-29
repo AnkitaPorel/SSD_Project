@@ -17,7 +17,7 @@ const UserResponses = mongoose.model('UserResponses', userResponsesSchema);
 const summarySchema = new mongoose.Schema({
   userId: { type: String, required: true },
   summary: { type: String, required: true },
-});
+}, { timestamps: true });
 
 const Summary = mongoose.model('Summary', summarySchema);
 
@@ -49,7 +49,18 @@ router.post('/save-user-responses', async (req, res) => {
     const newUserResponse = new UserResponses({ userId, userResponses });
     await newUserResponse.save();
 
-    res.status(200).json({ message: 'User responses saved successfully.' });
+    // Update summary
+    const summaryText = Object.entries(userResponses)
+      .map(([key, value]) => 
+        typeof value === 'object'
+          ? `${key}:\n${Object.entries(value).map(([k, v]) => `   - ${k}: ${v || 'N/A'}`).join('\n')}`
+          : `${key}: ${value || 'N/A'}`
+      ).join('\n');
+
+    const newSummary = new Summary({ userId, summary: summaryText });
+    await newSummary.save();
+
+    res.status(200).json({ message: 'User responses and summary saved successfully.' });
   } catch (error) {
     console.error('Error saving user responses:', error);
     res.status(500).json({ message: 'Internal Server Error.' });
@@ -58,25 +69,13 @@ router.post('/save-user-responses', async (req, res) => {
 
 router.get('/get-summaries', async (req, res) => {
   try {
-    const userResponses = await UserResponses.find().sort({ createdAt: -1 }).limit(3);
+    const summaries = await Summary.find().sort({ createdAt: -1 }).limit(3);
 
-    const summaries = userResponses.map((response) => {
-      const { userResponses } = response;
-      let summary = 'Summary available: \n';
-      for (const [key, value] of Object.entries(userResponses)) {
-        if (typeof value === 'object') {
-          summary += `${key}:\n`;
-          for (const [nestedKey, nestedValue] of Object.entries(value)) {
-            summary += `   - ${nestedKey}: ${nestedValue || 'N/A'}\n`;
-          }
-        } else {
-          summary += `${key}: ${value || 'N/A'}\n`;
-        }
-      }
-      return summary;
-    });
+    if (summaries.length === 0) {
+      return res.status(404).json({ summaries: [], message: 'No summaries available.' });
+    }
 
-    res.status(200).json({ summaries });
+    res.status(200).json({ summaries: summaries.map(s => s.summary) });
   } catch (error) {
     console.error('Error generating summaries:', error);
     res.status(500).json({ message: 'Failed to generate summaries.' });

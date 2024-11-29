@@ -57,7 +57,7 @@ app.use('/api', metaRoutes);
 app.use('/api', elitoolRoutes);
 
 const isValidEnglishPhrase = (text) => {
-    const regex = /^[A-Za-z0-9,.!?'" ]+$/; // Allow letters, numbers, punctuation, and spaces
+    const regex = /^[A-Za-z0-9,.!?'" ]+$/;
     return regex.test(text) && text.trim().length > 0;
 };
 

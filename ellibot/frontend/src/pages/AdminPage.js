@@ -10,25 +10,26 @@ const AdminPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSummaries = async () => {
-      setIsLoadingSummaries(true);
-      try {
-        const response = await fetch('http://localhost:5001/api/get-summaries');
-        if (!response.ok) {
-          throw new Error('Failed to fetch summaries');
-        }
-        const data = await response.json();
-        setSummaries(data.summaries || []);
-      } catch (error) {
-        console.error('Error fetching summaries:', error);
-      } finally {
-        setIsLoadingSummaries(false);
+  const fetchSummaries = async () => {
+    setIsLoadingSummaries(true);
+    try {
+      const response = await fetch('http://localhost:5001/api/get-summaries');
+      if (!response.ok) {
+        throw new Error('Failed to fetch summaries');
       }
-    };
+      const data = await response.json();
+      setSummaries(data.summaries || []);
+    } catch (error) {
+        console.error('Error fetching summaries:', error);
+    } finally {
+        setIsLoadingSummaries(false);
+    }
+  };
 
+  useEffect(() => {
     fetchSummaries();
   }, []);
+  
 
   const handleRedirectToMail = () => {
     const mailboxUrl = 'https://mail.google.com/';
@@ -74,6 +75,7 @@ const AdminPage = () => {
               ))}
             </ul>
           )}
+          <button onClick={fetchSummaries}>Refresh Summaries</button>
           <button onClick={handleRedirectToMail}>
             Send the summary to engineers
           </button>
