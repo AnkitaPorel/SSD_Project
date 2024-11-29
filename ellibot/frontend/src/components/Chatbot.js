@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../styles/Chatbot.css';
 
 const Chatbot = () => {
@@ -8,8 +8,15 @@ const Chatbot = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userResponses, setUserResponses] = useState({});
   const [isDefaultQuestionAsked, setIsDefaultQuestionAsked] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const defaultQuestion = "Before we finish, is there anything else you'd like to share or clarify?";
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   // Fetch meta-model on mount
   useEffect(() => {
@@ -104,7 +111,7 @@ const Chatbot = () => {
   
   
   const summarizeResponses = async () => {
-    let summary = 'Here is a quick summary the responses:\n';
+    let summary = 'Here is a quick summary the responses you gave:\n';
   
     metaModel.data.reportMetaModel.attributes.forEach((attr) => {
       const userResponse = userResponses[attr.name];
@@ -141,20 +148,6 @@ const Chatbot = () => {
     } catch (error) {
       console.error('Error saving responses:', error);
     }
-
-    try {
-      const response = await fetch('http://localhost:5001/api/save-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ summary, userId: 'guest' }),
-      });
-  
-      if (!response.ok) {
-        console.error('Error saving summary:', await response.json());
-      }
-    } catch (error) {
-      console.error('Error saving summary:', error);
-    }
   };
   
   const handleDefaultQuestion = (response) => {
@@ -181,6 +174,7 @@ const Chatbot = () => {
             {msg.text}
           </div>
         ))}
+        <div ref={messagesEndRef}></div>
       </div>
       <div className="chatbot-input">
         <input

@@ -56,24 +56,6 @@ router.post('/save-user-responses', async (req, res) => {
   }
 });
 
-router.post('/save-summary', async (req, res) => {
-  try {
-    const { userId, summary } = req.body;
-
-    if (!userId || !summary) {
-      return res.status(400).json({ message: 'userId and summary are required.' });
-    }
-
-    const newSummary = new Summary({ userId, summary });
-    await newSummary.save();
-
-    res.status(200).json({ message: 'Summary saved successfully.' });
-  } catch (error) {
-    console.error('Error saving summary:', error);
-    res.status(500).json({ message: 'Internal Server Error.' });
-  }
-});
-
 router.get('/get-summaries', async (req, res) => {
   try {
     const summaries = await Summary.find().sort({ createdAt: -1 }).limit(3);
