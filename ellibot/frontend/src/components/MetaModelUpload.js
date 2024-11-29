@@ -15,7 +15,7 @@ const MetaModelUpload = () => {
     }
 
     const formData = new FormData();
-    formData.append('file', file); // Append the file to form data
+    formData.append('file', file);
 
     try {
       const response = await fetch('http://localhost:5001/api/upload-meta-model', {

@@ -10,6 +10,9 @@ const Chatbot = () => {
   const [isDefaultQuestionAsked, setIsDefaultQuestionAsked] = useState(false);
   const messagesEndRef = useRef(null);
   const [userEmail, setUserEmail] = useState('');
+  const [additionalRequirements, setAdditionalRequirements] = useState('');
+  const [summaries, setSummaries] = useState([]);
+
   const defaultQuestion = "Before we finish, is there anything else you'd like to share or clarify?";
 
   useEffect(() => {
@@ -18,6 +21,7 @@ const Chatbot = () => {
       setUserEmail(email);
     }
   }, []);
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -66,18 +70,18 @@ const Chatbot = () => {
 
   const handleMetaModelQuestions = () => {
     const currentAttribute = metaModel.data.reportMetaModel.attributes[currentQuestionIndex];
-  
+
     if (currentAttribute) {
       if (currentAttribute.type === 'object' && currentAttribute.attributes) {
         const nestedAttrIndex = Object.keys(userResponses[currentAttribute.name] || {}).length;
         const nestedAttribute = currentAttribute.attributes[nestedAttrIndex];
-  
+
         if (nestedAttribute) {
           setMessages((prevMessages) => [
             ...prevMessages,
             { sender: 'bot', text: `Would you like to add anything to the ${nestedAttribute.label}?` },
           ]);
-  
+
           setUserResponses((prev) => ({
             ...prev,
             [currentAttribute.name]: {
@@ -98,9 +102,9 @@ const Chatbot = () => {
           ...prev,
           [currentAttribute.name]: input.trim(),
         }));
-  
+
         const nextIndex = currentQuestionIndex + 1;
-  
+
         if (nextIndex < metaModel.data.reportMetaModel.attributes.length) {
           const nextAttribute = metaModel.data.reportMetaModel.attributes[nextIndex];
           setMessages((prevMessages) => [
@@ -114,39 +118,76 @@ const Chatbot = () => {
       }
     }
   };
-  
+
+  const saveFinalResponses = async (newRequirement = additionalRequirements) => {
+    try {
+      const response = await fetch('http://localhost:5001/api/save-user-responses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userResponses,
+          userId: userEmail || 'guest',
+          additionalRequirements: newRequirement,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Error saving final responses:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error saving final responses:', error);
+    }
+  };
+
+  const fetchSummaries = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/get-summaries');
+      if (!response.ok) throw new Error('Failed to fetch summaries');
+      const data = await response.json();
+      setSummaries(data.summaries);
+    } catch (error) {
+      console.error('Error fetching summaries:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSummaries();
+  }, []);
+
   const summarizeResponses = async () => {
-    let summary = 'Here is a quick summary the responses you gave: \n';
-  
+    let summary = 'Here is a quick summary of the responses you gave:\n';
+
     metaModel.data.reportMetaModel.attributes.forEach((attr) => {
       const userResponse = userResponses[attr.name];
       if (attr.type === 'object' && attr.attributes) {
         summary += `${attr.label}:\n`;
         attr.attributes.forEach((nestedAttr) => {
           const nestedResponse = userResponse?.[nestedAttr.name] || 'N/A';
-          summary += `   - ${nestedAttr.label}: ${nestedResponse}, \n`;
+          summary += `   - ${nestedAttr.label}: ${nestedResponse}\n`;
         });
       } else {
-        summary += `${attr.label}: ${userResponse || 'N/A'}, n`;
+        summary += `${attr.label}: ${userResponse || 'N/A'}\n`;
       }
     });
-  
+
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: 'bot', text: "Here's what we have so far: " },
+      { sender: 'bot', text: "Here's what we have so far:" },
       { sender: 'bot', text: summary },
       { sender: 'bot', text: defaultQuestion },
     ]);
-  
+
     setIsDefaultQuestionAsked(true);
-    
+
     try {
       const response = await fetch('http://localhost:5001/api/save-user-responses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userResponses, userId: userEmail || 'guest',
-         }),
+          userResponses,
+          userId: userEmail || 'guest',
+          additionalRequirements,
+        }),
       });
 
       if (!response.ok) {
@@ -156,20 +197,22 @@ const Chatbot = () => {
       console.error('Error saving responses:', error);
     }
   };
-  
+
   const handleDefaultQuestion = (response) => {
     const lowercasedResponse = response.toLowerCase();
-    if (lowercasedResponse === 'no' || lowercasedResponse === 'leave') {
+    if (lowercasedResponse === 'no' || lowercasedResponse === 'leave' || lowercasedResponse === 'exit') {
       setMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'bot', text: 'Thank you for your time! If you need further assistance, feel free to reach out again. Have a great day!' },
       ]);
+      saveFinalResponses();
       setIsDefaultQuestionAsked(false);
     } else {
       setMessages((prevMessages) => [
         ...prevMessages,
         { sender: 'bot', text: 'Got it. Please share any additional details or clarifications you have.' },
       ]);
+      setAdditionalRequirements((prev) => `${prev}\n${response}`);
     }
   };
 

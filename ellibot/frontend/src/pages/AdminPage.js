@@ -29,7 +29,6 @@ const AdminPage = () => {
   useEffect(() => {
     fetchSummaries();
   }, []);
-  
 
   const handleRedirectToMail = () => {
     const mailboxUrl = 'https://mail.google.com/';
@@ -41,7 +40,7 @@ const AdminPage = () => {
   };
 
   const handleLogout = () => {
-    navigate('/');  // Redirect to Login Page
+    navigate('/');
   };
 
   return (

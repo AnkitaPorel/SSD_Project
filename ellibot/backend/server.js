@@ -16,7 +16,6 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const mongoUri = process.env.DATABASE_CONNECTION_STRING || "mongodb://localhost:27017/ellibot";
 
-// Connect to MongoDB
 mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true

@@ -16,7 +16,6 @@ const RegisterPage = () => {
   const handleRegister = async (event) => {
     event.preventDefault();
 
-    // Basic validation
     if (!name || !email || !password || !department) {
       setError('Please fill in all fields.');
       return;

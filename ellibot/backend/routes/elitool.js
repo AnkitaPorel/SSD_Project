@@ -40,7 +40,7 @@ router.get('/meta-model', async (req, res) => {
 
 router.post('/save-user-responses', async (req, res) => {
   try {
-    const { userId, userResponses } = req.body;
+    const { userId, userResponses, additionalRequirements } = req.body;
 
     if (!userId || !userResponses) {
       return res.status(400).json({ message: 'userId and userResponses are required.' });
@@ -49,7 +49,6 @@ router.post('/save-user-responses', async (req, res) => {
     const newUserResponse = new UserResponses({ userId, userResponses });
     await newUserResponse.save();
 
-    // Update summary
     const summaryText = Object.entries(userResponses)
       .map(([key, value]) => 
         typeof value === 'object'
@@ -57,7 +56,9 @@ router.post('/save-user-responses', async (req, res) => {
           : `${key}: ${value || 'N/A'}`
       ).join('\n');
 
-    const newSummary = new Summary({ userId, summary: summaryText });
+    const finalSummary = additionalRequirements
+    ? `${summaryText}\n\nAdditional Requirements:\n${additionalRequirements}` : summaryText;
+    const newSummary = new Summary({ userId, summary: finalSummary });
     await newSummary.save();
 
     res.status(200).json({ message: 'User responses and summary saved successfully.' });
@@ -78,7 +79,7 @@ router.get('/get-summaries', async (req, res) => {
     res.status(200).json({ summaries: summaries.map(s => ({
       userId: s.userId,
       summary: s.summary,
-    }))
+    })),
   });
   } catch (error) {
     console.error('Error generating summaries:', error);

@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // For navigation
+import { useNavigate } from 'react-router-dom';
 import Chatbot from '../components/Chatbot';
 import '../styles/UserPage.css';
 
 const UserPage = () => {
   const [chatOpen, setChatOpen] = useState(false);
-  const navigate = useNavigate();  // Initialize navigation
+  const navigate = useNavigate();
 
   const toggleChat = () => {
     setChatOpen(!chatOpen);
   };
 
   const handleLogout = () => {
-    navigate('/');  // Redirect to Login Page
+    navigate('/');
   };
 
   return (
