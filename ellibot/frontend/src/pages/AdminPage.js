@@ -33,7 +33,7 @@ const AdminPage = () => {
   const handleRedirectToMail = () => {
     const mailboxUrl = 'https://mail.google.com/';
     if (mailboxUrl) {
-      window.location.href = mailboxUrl;
+      window.open(mailboxUrl, '_blank');
     } else {
       console.error("Mailbox URL is not defined.");
     }
