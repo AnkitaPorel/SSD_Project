@@ -62,7 +62,7 @@ router.get('/get-summaries', async (req, res) => {
 
     const summaries = userResponses.map((response) => {
       const { userResponses } = response;
-      let summary = 'Summary:\n';
+      let summary = 'Summary available: \n';
       for (const [key, value] of Object.entries(userResponses)) {
         if (typeof value === 'object') {
           summary += `${key}:\n`;

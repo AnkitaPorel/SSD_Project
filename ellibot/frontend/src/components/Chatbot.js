@@ -69,7 +69,7 @@ const Chatbot = () => {
         if (nestedAttribute) {
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'bot', text: `Could you please specify the ${nestedAttribute.label}?` },
+            { sender: 'bot', text: `Would you like to add anything to the ${nestedAttribute.label}?` },
           ]);
   
           setUserResponses((prev) => ({
@@ -99,7 +99,7 @@ const Chatbot = () => {
           const nextAttribute = metaModel.data.reportMetaModel.attributes[nextIndex];
           setMessages((prevMessages) => [
             ...prevMessages,
-            { sender: 'bot', text: `Can you please provide the ${nextAttribute.label}?` },
+            { sender: 'bot', text: `Do you have any requirements for ${nextAttribute.label}?` },
           ]);
           setCurrentQuestionIndex(nextIndex);
         } else {
@@ -109,9 +109,8 @@ const Chatbot = () => {
     }
   };
   
-  
   const summarizeResponses = async () => {
-    let summary = 'Here is a quick summary the responses you gave:\n';
+    let summary = 'Here is a quick summary the responses you gave: \n';
   
     metaModel.data.reportMetaModel.attributes.forEach((attr) => {
       const userResponse = userResponses[attr.name];
@@ -119,16 +118,16 @@ const Chatbot = () => {
         summary += `${attr.label}:\n`;
         attr.attributes.forEach((nestedAttr) => {
           const nestedResponse = userResponse?.[nestedAttr.name] || 'N/A';
-          summary += `   - ${nestedAttr.label}: ${nestedResponse}\n`;
+          summary += `   - ${nestedAttr.label}: ${nestedResponse}, \n`;
         });
       } else {
-        summary += `${attr.label}: ${userResponse || 'N/A'}\n`;
+        summary += `${attr.label}: ${userResponse || 'N/A'}, n`;
       }
     });
   
     setMessages((prevMessages) => [
       ...prevMessages,
-      { sender: 'bot', text: "Here's what we have so far:" },
+      { sender: 'bot', text: "Here's what we have so far: " },
       { sender: 'bot', text: summary },
       { sender: 'bot', text: defaultQuestion },
     ]);

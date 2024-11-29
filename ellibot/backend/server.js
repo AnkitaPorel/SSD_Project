@@ -10,7 +10,7 @@ const userRoutes = require('./routes/user');
 const metaRoutes = require('./routes/metaroutes');
 const elitoolRoutes = require('./routes/elitool');
 
-dotenv.config({ path: './config.env' }); // Load .env variables
+dotenv.config({ path: './config.env' });
 
 const app = express();
 const PORT = process.env.PORT || 5001;

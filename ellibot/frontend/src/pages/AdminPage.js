@@ -30,24 +30,12 @@ const AdminPage = () => {
     fetchSummaries();
   }, []);
 
-  const handleSendToEngineers = async () => {
-    try {
-      const response = await fetch('http://localhost:5001/api/send-user-responses', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fixedEmails: ['xyz@gmail.com', 'abc@gmail.com'] }),
-      });
-
-      if (response.ok) {
-        alert('User responses sent successfully to the data engineering team!');
-        setEmailSent(true);
-      } else {
-        console.error('Error sending user responses:', await response.json());
-        alert('Failed to send user responses.');
-      }
-    } catch (error) {
-      console.error('Error sending user responses:', error);
-      alert('An error occurred while sending user responses.');
+  const handleRedirectToMail = () => {
+    const mailboxUrl = 'https://mail.google.com/';
+    if (mailboxUrl) {
+      window.location.href = mailboxUrl;
+    } else {
+      console.error("Mailbox URL is not defined.");
     }
   };
 
@@ -86,8 +74,8 @@ const AdminPage = () => {
               ))}
             </ul>
           )}
-          <button onClick={handleSendToEngineers} disabled={emailSent}>
-            {emailSent ? 'Email Sent!' : 'Send User Responses to Engineers'}
+          <button onClick={handleRedirectToMail}>
+            Send the summary to engineers
           </button>
         </div>
       </div>
